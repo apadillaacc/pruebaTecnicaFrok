@@ -1,26 +1,65 @@
-import { Component, inject } from '@angular/core';
-import { RefresherCustomEvent } from '@ionic/angular';
-import { MessageComponent } from '../message/message.component';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { IonModal, RefresherCustomEvent } from '@ionic/angular';
 
-import { DataService, Message } from '../services/data.service';
+import { DataService, Task } from '../services/data.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  providers: [DatePipe],
   standalone: false,
 })
-export class HomePage {
-  private data = inject(DataService);
-  constructor() {}
 
-  refresh(ev: any) {
-    setTimeout(() => {
-      (ev as RefresherCustomEvent).detail.complete();
-    }, 3000);
+export class HomePage implements OnInit {
+  private data = inject(DataService);
+  private datePipe = inject(DatePipe);
+
+  @ViewChild(IonModal) modal!: IonModal;
+  tasks: Task[] = [];
+  taskName!: string;
+  taskDescription!: string;
+
+  constructor() {}
+  
+  ngOnInit(): void {
+    this.getTasks();
   }
 
-  getMessages(): Message[] {
-    return this.data.getMessages();
+  deleteTask(taskToDelete: Task) {
+    this.tasks = this.tasks.filter(task => task.nombreTarea !== taskToDelete.nombreTarea);
+    this.saveDataInstorage();
+  }
+
+  completeTask(taskToComplete: Task) {
+    const index = this.tasks.indexOf(taskToComplete);
+    this.tasks[index].completada = true;
+    this.saveDataInstorage();
+  }
+
+  async getTasks() {
+    this.data.getFromStorage('tasks').then((value) => {
+      this.tasks = value ?? [];
+    });
+  }
+
+  modalCancel() {
+    this.modal.dismiss(null, 'cancel');
+  }
+
+  async modalCreate() {
+    this.tasks.push({
+      nombreTarea: this.taskName,
+      descripcion: this.taskDescription,
+      fechaCreacion: this.datePipe.transform(new Date(), 'dd-MM-yyy')?.toString() ?? '',
+      completada: false,
+    });
+    this.saveDataInstorage();
+    this.modal.dismiss();
+  }
+  
+  saveDataInstorage() {
+    this.data.setInStorage('tasks', this.tasks);
   }
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { DataService } from './services/data.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,13 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  private data = inject(DataService);
+  constructor() {
+    this.data.setInStorage('tasks', [{
+      nombreTarea: 'Task 1',
+      descripcion: 'Task de prueba numero uno',
+      fechaCreacion: '3/4/2025',
+      completada: false,
+    }]);
+  }
 }
