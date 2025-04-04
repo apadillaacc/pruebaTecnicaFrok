@@ -9,12 +9,5 @@ import { DataService } from './services/data.service';
 })
 export class AppComponent {
   private data = inject(DataService);
-  constructor() {
-    this.data.setInStorage('tasks', [{
-      nombreTarea: 'Task 1',
-      descripcion: 'Task de prueba numero uno',
-      fechaCreacion: '3/4/2025',
-      completada: false,
-    }]);
-  }
+  constructor() { }
 }

@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "FuncionesAdicionales": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Flag para activar funciones adicionales",
+      "valueType": "BOOLEAN"
+    }
+  }
+}

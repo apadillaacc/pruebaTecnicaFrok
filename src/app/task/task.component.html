@@ -1,0 +1,34 @@
+@if (task) {
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>
+      {{ task.nombreTarea }}
+    </ion-card-title>
+    @if (showNewFeature) {
+      <ion-card-subtitle>
+        Categoría: {{ task.categoria ? task.categoria : 'Sin asignar'}}
+      </ion-card-subtitle>
+    }
+  </ion-card-header>
+  <ion-card-content>
+    <div class="dates-container">
+      <div>
+        Creada
+        <span class="date">
+          <ion-note>{{ task.fechaCreacion }}</ion-note>
+        </span>
+      </div>
+    </div>
+    <div>
+      {{ task.descripcion }}
+    </div>
+  </ion-card-content>
+
+  <ion-button fill="clear" [disabled]="task.completada" (click)="completeTask()">{{ task.completada ? 'Completada' :
+    'Completar' }}</ion-button>
+    @if (showNewFeature) {
+      <ion-button fill="clear" (click)="changeCategory()">Cambiar categoría</ion-button>
+    }
+  <ion-button fill="clear" (click)="deleteTask()">Eliminar</ion-button>
+</ion-card>
+}

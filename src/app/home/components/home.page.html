@@ -1,0 +1,115 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Tareas
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button shape="round" [routerLink]="['/categories']">
+        Categorías
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  @if (showFeatures) {
+    <form #filterForm="ngForm">
+      <ion-item lines="none">
+        <ion-select label="Filtrar por categoría" (ionChange)="filterTasks($event)" [(ngModel)]="filter" name="filter">
+          @for (category of categories; track category) {
+          <ion-select-option value="{{ category.name }}">{{ category.name }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+    </form>
+  }
+  <ion-button fill="clear" (click)="clearFilter()">
+    Limpiar filtro
+  </ion-button>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button id="open-modal" expand="block">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  @if (tasks.length > 0) {
+    <ion-list lines="full">
+      @for (task of tasks; track task) {
+      <ion-item>
+        <app-task [task]="task" (onDelete)="deleteTask(task)" (onComplete)="completeTask(task)" (onChangeCategory)="changeCategory(task)"></app-task>
+      </ion-item>
+      }
+    </ion-list>
+  }
+
+  <ion-modal trigger="open-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="modalCancel()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title class="modal-title">Crear nueva tarea</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modalCreate()" [strong]="true" [disabled]="createTaskForm.invalid">Crear</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #createTaskForm="ngForm">
+          <ion-item lines="none">
+            <ion-input label="Nombre" labelPlacement="stacked" type="text" placeholder="Nombre" required="true"
+              [(ngModel)]="taskName" name="name" error-text="Campo obligatorio"></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-textarea label="Descripción" labelPlacement="stacked" type="text" placeholder="Descripción"
+              required="true" [(ngModel)]="taskDescription" name="description"
+              error-text="Campo obligatorio"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-select label="Categoria" label-placement="floating" [(ngModel)]="category" name="category">
+              @for (category of categories; track category) {
+              <ion-select-option value="{{ category.name }}">{{ category.name }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #categoryModal>
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="cancelEdit()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title class="modal-title">Asignar categoría</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setCategory()" [strong]="true">Aceptar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #changeCategoryForm="ngForm">
+          <ion-item>
+            <ion-select label="Categoria" label-placement="floating" [(ngModel)]="category" name="category">
+              @for (category of categories; track category) {
+              <ion-select-option value="{{ category.name }}">{{ category.name }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  @if (tasks.length === 0) {
+    <div class="empty-state-container">
+      Aún no tienes ninguna tarea
+    </div>
+  }
+</ion-content>

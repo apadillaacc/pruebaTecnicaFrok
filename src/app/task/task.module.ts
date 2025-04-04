@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
+import { TaskComponent } from './task.component';
 
-import { MessageComponent } from './message.component';
 
 @NgModule({
   imports: [ CommonModule, FormsModule, IonicModule, RouterModule],
-  declarations: [MessageComponent],
-  exports: [MessageComponent]
+  declarations: [TaskComponent],
+  exports: [TaskComponent]
 })
-export class MessageComponentModule {}
+export class TaskComponentModule {}
