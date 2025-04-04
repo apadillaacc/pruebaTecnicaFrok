@@ -34,6 +34,10 @@ export class CategoriesComponent  implements OnInit {
     });
   }
 
+  openCreateModal() {
+    this.modal.present();
+  }
+
   /**
    * Abre el modal de crear o editar categoria segun el botón seleccionado
    */

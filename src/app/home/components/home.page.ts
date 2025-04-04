@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
 
 import { Category, DataService, Task } from '../../services/data.service';
@@ -17,6 +17,7 @@ export class HomePage implements OnInit {
   private data = inject(DataService);
   private remoteConfig = inject(RemoteConfigService);
   private datePipe = inject(DatePipe);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild(IonModal) modal!: IonModal;
   @ViewChild('categoryModal', { static: true }) categoryModal?: IonModal;
@@ -37,6 +38,12 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.initializeAppAndLoadTasks();
+  }
+
+  ionViewWillEnter() {
+    if (this.remoteConfig.getNewFeatureFlag()) {
+      this.getCategories();
+    }
   }
 
   /**
@@ -148,9 +155,9 @@ export class HomePage implements OnInit {
     if (index !== -1) {
       this.tasks[index].categoria = this.category;
     }
-    this.saveDataInstorage();
     this.changeCategoryForm.reset();
     this.category = '';
+    this.saveDataInstorage();
     this.categoryModal?.dismiss();
   }
 
@@ -177,5 +184,6 @@ export class HomePage implements OnInit {
   clearFilter() {
     this.filterForm.reset();
     this.tasks = [...this.tasks, ...this.filteredTasks];
+    this.filteredTasks = [];
   }
 }

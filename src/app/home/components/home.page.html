@@ -24,7 +24,7 @@
       </ion-item>
     </form>
   }
-  <ion-button fill="clear" (click)="clearFilter()">
+  <ion-button fill="clear" (click)="clearFilter()" [disabled]="filteredTasks.length === 0">
     Limpiar filtro
   </ion-button>
 

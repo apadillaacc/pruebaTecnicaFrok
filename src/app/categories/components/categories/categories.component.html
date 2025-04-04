@@ -12,22 +12,22 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button id="open-modal" expand="block">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-
+  
   @if (categories.length > 0) {
     <ion-list lines="full">
       @for (category of categories; track category) {
-      <ion-item>
-        <app-category-card [category]="category" (onDelete)="deleteCategory(category)" (onEdit)="editCategory(category)"></app-category-card>
-      </ion-item>
+        <ion-item>
+          <app-category-card [category]="category" (onDelete)="deleteCategory(category)" (onEdit)="editCategory(category)"></app-category-card>
+        </ion-item>
       }
     </ion-list>
   }
-
+  
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button id="open-modal" expand="block" (click)="openCreateModal()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
   <ion-modal trigger="open-modal">
     <ng-template>
