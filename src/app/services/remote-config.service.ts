@@ -7,6 +7,7 @@ import {
   getBoolean,
   getRemoteConfig,
   fetchAndActivate,
+  getValue,
 } from 'firebase/remote-config'
 
 @Injectable({
@@ -19,6 +20,11 @@ export class RemoteConfigService {
 
   constructor() {
     this.remoteConfig = getRemoteConfig(this.app);
+    // Se dejó en cero segundos por cuestion de realizar las pruebas de una manera más rápida
+    this.remoteConfig.settings = {
+      minimumFetchIntervalMillis: 0,
+      fetchTimeoutMillis: 10000
+    };
   }
 
   /**
@@ -27,7 +33,9 @@ export class RemoteConfigService {
    */
   async initializeApp() {
     try {
-      await fetchAndActivate(this.remoteConfig);
+      const activated = await fetchAndActivate(this.remoteConfig);
+      console.log('activated', activated);
+      console.log('config', await getValue(this.remoteConfig, 'FuncionesAdicionales'))
       this.activateNewFeature = getBoolean(this.remoteConfig, 'FuncionesAdicionales');
       console.log(this.activateNewFeature);
     } catch (error) {

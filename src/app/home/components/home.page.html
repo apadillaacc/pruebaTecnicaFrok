@@ -3,11 +3,13 @@
     <ion-title>
       Tareas
     </ion-title>
-    <ion-buttons slot="end">
-      <ion-button shape="round" [routerLink]="['/categories']">
-        Categorías
-      </ion-button>
-    </ion-buttons>
+    @if (showFeatures) {
+      <ion-buttons slot="end">
+        <ion-button shape="round" [routerLink]="['/categories']">
+          Categorías
+        </ion-button>
+      </ion-buttons>
+    }
   </ion-toolbar>
 </ion-header>
 
