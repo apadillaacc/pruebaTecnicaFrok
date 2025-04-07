@@ -33,11 +33,8 @@ export class RemoteConfigService {
    */
   async initializeApp() {
     try {
-      const activated = await fetchAndActivate(this.remoteConfig);
-      console.log('activated', activated);
-      console.log('config', await getValue(this.remoteConfig, 'FuncionesAdicionales'))
+      await fetchAndActivate(this.remoteConfig);
       this.activateNewFeature = getBoolean(this.remoteConfig, 'FuncionesAdicionales');
-      console.log(this.activateNewFeature);
     } catch (error) {
       console.error('Error fetching remote config:', error);
     }
