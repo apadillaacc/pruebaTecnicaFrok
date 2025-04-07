@@ -19,6 +19,11 @@ export class RemoteConfigService {
 
   constructor() {
     this.remoteConfig = getRemoteConfig(this.app);
+    // Se dejó en cero segundos por cuestion de realizar las pruebas de una manera más rápida
+    this.remoteConfig.settings = {
+      minimumFetchIntervalMillis: 0,
+      fetchTimeoutMillis: 10000
+    };
   }
 
   /**
@@ -29,7 +34,6 @@ export class RemoteConfigService {
     try {
       await fetchAndActivate(this.remoteConfig);
       this.activateNewFeature = getBoolean(this.remoteConfig, 'FuncionesAdicionales');
-      console.log(this.activateNewFeature);
     } catch (error) {
       console.error('Error fetching remote config:', error);
     }

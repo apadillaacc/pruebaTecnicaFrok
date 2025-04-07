@@ -159,6 +159,8 @@ export class HomePage implements OnInit {
     this.category = '';
     this.saveDataInstorage();
     this.categoryModal?.dismiss();
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   /**
