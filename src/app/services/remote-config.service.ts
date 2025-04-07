@@ -7,6 +7,7 @@ import {
   getBoolean,
   getRemoteConfig,
   fetchAndActivate,
+  getValue,
 } from 'firebase/remote-config'
 
 @Injectable({
