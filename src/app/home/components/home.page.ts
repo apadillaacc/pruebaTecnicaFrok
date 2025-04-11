@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { IonModal } from '@ionic/angular';
 
 import { Category, DataService, Task } from '../../services/data.service';
@@ -24,8 +32,8 @@ export class HomePage implements OnInit {
   @ViewChild('createTaskForm') createForm!: NgForm;
   @ViewChild('changeCategoryForm') changeCategoryForm!: NgForm;
   @ViewChild('filterForm') filterForm!: NgForm;
-  tasks: Task[] = [];
-  filteredTasks: Task[] = [];
+  tasks: WritableSignal<Task[]> = signal([]);
+  filteredTasks: WritableSignal<Task[]> = signal([]);
   categories: Category[] = [];
   taskName!: string;
   taskDescription!: string;
@@ -61,12 +69,12 @@ export class HomePage implements OnInit {
 
   /**
    * Elimina la tarea seleccionada y guarda el arreglo en storage
-   * 
+   *
    * @param taskToDelete - Tarea a eliminar
    */
   deleteTask(taskToDelete: Task) {
-    this.tasks = this.tasks.filter(
-      (task) => task.nombreTarea !== taskToDelete.nombreTarea
+    this.tasks.update((tasks: Task[]) =>
+      tasks.filter((task) => task.nombreTarea !== taskToDelete.nombreTarea)
     );
     this.saveDataInstorage();
   }
@@ -77,8 +85,8 @@ export class HomePage implements OnInit {
    */
 
   completeTask(taskToComplete: Task) {
-    const index = this.tasks.indexOf(taskToComplete);
-    this.tasks[index].completada = true;
+    const index = this.tasks().indexOf(taskToComplete);
+    this.tasks()[index].completada = true;
     this.saveDataInstorage();
   }
 
@@ -96,12 +104,12 @@ export class HomePage implements OnInit {
    */
   async getTasks() {
     this.data.getFromStorage('tasks').then((value) => {
-      this.tasks = value ?? [];
+      this.tasks.set(value ?? []);
     });
   }
 
   /**
-   * Reinicia la forma de creación y cierra el modal de creación de tarea 
+   * Reinicia la forma de creación y cierra el modal de creación de tarea
    */
   modalCancel() {
     this.createForm.reset();
@@ -112,16 +120,19 @@ export class HomePage implements OnInit {
    * Crea una nueva tarea con los datos de la forma de creación y guarda en el storage
    */
   async modalCreate() {
-    this.tasks.push({
-      nombreTarea: this.taskName,
-      descripcion: this.taskDescription,
-      fechaCreacion:
-        this.datePipe.transform(new Date(), 'dd-MM-yyy')?.toString() ?? '',
-      completada: false,
-      categoria: this.remoteConfig.getNewFeatureFlag()
-        ? this.category
-        : undefined,
-    });
+    this.tasks.update((tasks: Task[]) => [
+      ...tasks,
+      {
+        nombreTarea: this.taskName,
+        descripcion: this.taskDescription,
+        fechaCreacion:
+          this.datePipe.transform(new Date(), 'dd-MM-yyy')?.toString() ?? '',
+        completada: false,
+        categoria: this.remoteConfig.getNewFeatureFlag()
+          ? this.category
+          : undefined,
+      },
+    ]);
     this.saveDataInstorage();
     this.createForm.reset();
     this.modal.dismiss();
@@ -149,11 +160,19 @@ export class HomePage implements OnInit {
    * Aisgna categoria nueva a tarea seleccionada
    */
   async setCategory() {
-    const index = this.tasks.findIndex(
+    const index = this.tasks().findIndex(
       (task) => task.nombreTarea === this.taskToEdit.nombreTarea
     );
     if (index !== -1) {
-      this.tasks[index].categoria = this.category;
+      const updateItem = this.tasks()[index];
+      updateItem.categoria = this.category;
+      this.tasks.update((tasks) =>
+        tasks.map((task) =>
+          task.nombreTarea === updateItem.nombreTarea
+            ? { ...task, categoria: this.category }
+            : task
+        )
+      );
     }
     this.changeCategoryForm.reset();
     this.category = '';
@@ -167,7 +186,7 @@ export class HomePage implements OnInit {
    * Guarda el arregla de tareas en el storage
    */
   saveDataInstorage() {
-    this.data.setTasksInStorage('tasks', this.tasks);
+    this.data.setTasksInStorage('tasks', this.tasks());
   }
 
   /**
@@ -176,8 +195,12 @@ export class HomePage implements OnInit {
    */
   filterTasks(event: any) {
     this.filter = event.detail.value;
-    this.filteredTasks = this.tasks.filter(task => task.categoria !== this.filter);
-    this.tasks = this.tasks.filter(task => task.categoria === this.filter);
+    this.filteredTasks.update(() =>
+      this.tasks().filter((task) => task.categoria !== this.filter)
+    );
+    this.tasks.update((tasks: Task[]) =>
+      tasks.filter((task) => task.categoria === this.filter)
+    );
   }
 
   /**
@@ -185,7 +208,7 @@ export class HomePage implements OnInit {
    */
   clearFilter() {
     this.filterForm.reset();
-    this.tasks = [...this.tasks, ...this.filteredTasks];
-    this.filteredTasks = [];
+    this.tasks.update((tasks: Task[]) => [...tasks, ...this.filteredTasks()]);
+    this.filteredTasks.set([]);
   }
 }

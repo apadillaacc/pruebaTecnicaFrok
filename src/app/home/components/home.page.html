@@ -26,7 +26,7 @@
       </ion-item>
     </form>
   }
-  <ion-button fill="clear" (click)="clearFilter()" [disabled]="filteredTasks.length === 0">
+  <ion-button fill="clear" (click)="clearFilter()" [disabled]="filteredTasks().length === 0">
     Limpiar filtro
   </ion-button>
 
@@ -36,9 +36,9 @@
     </ion-fab-button>
   </ion-fab>
 
-  @if (tasks.length > 0) {
+  @if (tasks().length > 0) {
     <ion-list lines="full">
-      @for (task of tasks; track task) {
+      @for (task of tasks(); track task) {
       <ion-item>
         <app-task [task]="task" (onDelete)="deleteTask(task)" (onComplete)="completeTask(task)" (onChangeCategory)="changeCategory(task)"></app-task>
       </ion-item>
@@ -109,7 +109,7 @@
     </ng-template>
   </ion-modal>
 
-  @if (tasks.length === 0) {
+  @if (tasks().length === 0) {
     <div class="empty-state-container">
       Aún no tienes ninguna tarea
     </div>

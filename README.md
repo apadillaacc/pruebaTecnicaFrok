@@ -1,4 +1,4 @@
-# H1 - Prueba tecnica 
+# Prueba tecnica 
 
 Para poder ejecutar el proyecto en la plataforma android se deben seguir los siguiente pasos
   1. Instalar java
