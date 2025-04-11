@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { DataService } from './services/data.service';
+import { Component, inject, OnInit } from '@angular/core';
+import { StorageInitUseCase } from './domain/usecases/storage-init';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +7,11 @@ import { DataService } from './services/data.service';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent {
-  private data = inject(DataService);
+export class AppComponent implements OnInit{
+  private storageInit = inject(StorageInitUseCase)
   constructor() { }
+  
+  ngOnInit(): void {
+    this.storageInit.execute();  
+  }
 }

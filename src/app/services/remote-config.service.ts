@@ -7,12 +7,12 @@ import {
   getBoolean,
   getRemoteConfig,
   fetchAndActivate,
-  getValue,
 } from 'firebase/remote-config'
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class RemoteConfigService {
   private remoteConfig = inject(RemoteConfig);
   private app: FirebaseApp = inject(FirebaseApp);

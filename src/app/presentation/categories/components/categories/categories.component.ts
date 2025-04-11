@@ -1,7 +1,9 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { IonModal } from '@ionic/angular';
-import { Category, DataService } from 'src/app/services/data.service';
+import { Category } from 'src/app/domain/models/category.model';
+import { CategoryGetFromStorageUseCase } from 'src/app/domain/usecases/category-get-from-storage';
+import { CategorySetInStorageUseCase } from 'src/app/domain/usecases/category-set-in-storage';
 
 @Component({
   selector: 'app-categories',
@@ -11,7 +13,8 @@ import { Category, DataService } from 'src/app/services/data.service';
   providers: []
 })
 export class CategoriesComponent  implements OnInit {
-  private data = inject(DataService);
+  private setCategoriesInStorage = inject(CategorySetInStorageUseCase);
+  private getFromStorage = inject(CategoryGetFromStorageUseCase);
 
   @ViewChild(IonModal) modal!: IonModal;
   @ViewChild('createCategoryForm') createForm!: NgForm;
@@ -29,7 +32,7 @@ export class CategoriesComponent  implements OnInit {
    * Carga las categorias desde el storage
    */
   getCategories() {
-    this.data.getFromStorage('categories').then(response => {
+    this.getFromStorage.execute({ key: 'categories' }).then(response => {
       this.categories = response ?? [];
     });
   }
@@ -102,7 +105,7 @@ export class CategoriesComponent  implements OnInit {
    * Guarda las categorias en el storage
    */
   saveCategoriesInstorage() {
-    this.data.setCategoriesInStorage('categories', this.categories);
+    this.setCategoriesInStorage.execute({ key: 'categories', value: this.categories });
   }
 
 }
