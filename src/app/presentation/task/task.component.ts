@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Task } from '../services/data.service';
-import { RemoteConfigService } from '../services/remote-config.service';
+import { TaskModel } from '../../domain/models/task.model';
+import { RemoteConfigService } from '../../services/remote-config.service';
 
 @Component({
   selector: 'app-task',
@@ -11,7 +11,7 @@ import { RemoteConfigService } from '../services/remote-config.service';
 })
 export class TaskComponent implements OnInit {
   private remoteConfig = inject(RemoteConfigService);
-  @Input() task?: Task;
+  @Input() task?: TaskModel;
   @Output() onDelete = new EventEmitter<void>();
   @Output() onComplete = new EventEmitter<void>();
   @Output() onChangeCategory = new EventEmitter<void>();

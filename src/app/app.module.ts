@@ -12,6 +12,7 @@ import {
   getRemoteConfig,
   provideRemoteConfig,
 } from '@angular/fire/remote-config';
+import { DataModule } from './data/data.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +21,7 @@ import {
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot(),
+    DataModule,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
